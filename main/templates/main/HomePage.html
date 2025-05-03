@@ -1,1 +1,14 @@
-Hello
+{% if tasks %}
+  {% for task in tasks %} 
+    {{ task.title }}
+  {% endfor %}
+{% else %}
+  Пора создать задачу
+{% endif %}
+
+<form method="POST" action='{% url 'create_task' %}'>
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">+</button>
+</form>
+
+
