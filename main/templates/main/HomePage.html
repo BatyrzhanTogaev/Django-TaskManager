@@ -1,13 +1,17 @@
 {% if tasks %}
   {% for task in tasks %} 
     {{ task.title }}
+    <form method="POST" action='{% url 'delete_task' task.pk %}'>
+      {% csrf_token %}
+      <button type="submit">X</button>
+    </form>
   {% endfor %}
 {% else %}
   Пора создать задачу
 {% endif %}
 
 <form method="POST" action='{% url 'create_task' %}'>
-  {% csrf_token %} {{ form.as_p }}
+  {% csrf_token %} {{ form.title }}
   <button type="submit">+</button>
 </form>
 
