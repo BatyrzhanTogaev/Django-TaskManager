@@ -3,12 +3,18 @@ from .forms import TaskForm
 from .models import Task
 
 
-def home_page_view(request):
+def render_view(request, extra_context=None):
     tasks = Task.objects.all()
     form = TaskForm()
-    return render(request, 'main/HomePage.html', {
-        'tasks': tasks, 'form': form
-        })
+    context = {'tasks': tasks, 'form': form}
+    if extra_context:
+        context.update(extra_context)
+
+    return render(request, 'main/HomePage.html', context)
+
+
+def home_page_view(request):
+    return render_view(request)
 
 
 def create_task_view(request):
@@ -21,7 +27,6 @@ def create_task_view(request):
 
     else:
         form = TaskForm()
-
     return redirect('HomePage')
 
 
@@ -30,11 +35,18 @@ def delete_task_view(request, pk):
     if request.method == 'POST':
         task.delete()
         return redirect('HomePage')
-    
+
 
 def edit_task_view(request, pk):
-    edit_task = get_object_or_404(Task, pk=pk)
-    if request.method == 'GET':
-        return render(request, 'main/HomePage.html', {
-            'edit_task': edit_task
-        })
+    task = get_object_or_404(Task, pk=pk)
+    return render_view(request, {'edit_task': task})
+
+
+def update_task_view(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    if request.method == 'POST':
+        form = TaskForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect('HomePage')
+    return render_view(request, {'edit_task': task, 'form': form})

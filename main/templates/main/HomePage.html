@@ -1,6 +1,11 @@
 {% if tasks %}
   {% for task in tasks %} 
     {{ task.title }}
+
+    <form method="GET" action="{% url 'edit_task' task.pk %}">
+      <button type="submit">Редактировать</button>
+    </form>
+
     <form method="POST" action='{% url 'delete_task' task.pk %}'>
       {% csrf_token %}
       <button type="submit">X</button>
@@ -10,9 +15,16 @@
   Пора создать задачу
 {% endif %}
 
-<form method="POST" action='{% url 'create_task' %}'>
+<form method="POST" action="
+  {% if edit_task %}
+    {% url 'update_task' edit_task.pk %}
+  {% else %}
+    {% url 'create_task' %}
+  {% endif %}
+">
+  
   {% csrf_token %} {{ form.title }}
-  <button type="submit">+</button>
-</form>
 
+  <button type="submit">{% if edit_task %}Сохранить{% else %}Добавить{% endif %}</button>
+</form>
 
