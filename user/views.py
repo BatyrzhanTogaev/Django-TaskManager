@@ -4,6 +4,10 @@ from django.contrib.auth import login
 
 
 def register_page_view(request):
+    '''
+    Функция для регистрацией
+    использует стандартную форму
+    '''
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
