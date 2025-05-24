@@ -6,10 +6,10 @@ from django.contrib.auth.decorators import login_required
 
 def render_view(request, extra_context=None):
     '''
-    Функция, которая рендерить шаблон с формами и задачами пользователя
+    Функция, которая рендерит шаблон с формами и задачами пользователя
     '''
-    tasks = Task.objects.filter(author=request.user)
-    form = TaskForm()
+    tasks = Task.objects.filter(author=request.user) if request.user.is_authenticated else []
+    form = TaskForm() if request.user.is_authenticated else None
     context = {'tasks': tasks, 'form': form}
     if extra_context:
         context.update(extra_context)
