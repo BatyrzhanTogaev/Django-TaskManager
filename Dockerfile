@@ -1,9 +1,14 @@
-FROM python
-WORKDIR /django-app
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
 COPY . .
-RUN pip install --upgrade pip \
-    && pip install -r requirements.txt
 
-EXPOSE 8000
+RUN python manage.py collectstatic --noinput
+RUN mkdir -p /app/staticfiles
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["gunicorn", "TaskManager.asgi:application", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
